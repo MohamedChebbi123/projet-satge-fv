@@ -1,9 +1,28 @@
+<?php
+include 'connection.php';
+session_start();
+
+if (!isset($_SESSION["client_id"])) {
+    echo "No client ID found in session.";
+    exit;
+}
+
+
+
+if (isset($_POST['logout'])) {
+    session_destroy();
+    header("Location: form.php");
+    exit();
+}
+$client_id = $_SESSION["client_id"];
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Client Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -68,17 +87,24 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <header class="navbar p-4">
+<body class="bg-gray-50 text-gray-800">
+
+<header class="navbar p-4">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">HeberGest</h1>
-            
+            <h3>client dashboard</h3>
             <nav class="navbar-nav space-x-6 hidden md:flex">
-                <a href="clientlist.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-users"></i> Liste des clients 
+                <a href="deployyourwebsite.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-users"></i> deploy your website 
                 </a>
-                <a href="listwebsite.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> Listes des websites
+                <a href="yourwebsite.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> your website
+                </a>
+                <a href="yourprofile.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> profile
+                </a>
+                <a href="welcome.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> welcome
                 </a>
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
@@ -88,46 +114,39 @@
             </nav>
         </div>
     </header>
-    <div class="container mx-auto mt-8">
-        <?php
-            include "connection.php";
-            session_start();
-            
-            
-            if (isset($_POST['logout'])) {
-                session_destroy();
-                header("Location: form.php");
-                exit;
+
+    
+    <div class="container mx-auto p-8">
+
+       
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Welcome, Client!</h1>
+            <p class="text-xl text-gray-600">Here are your profile details:</p>
+        </div>
+
+        
+        <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4">
+            <?php
+            $statement = $connection->prepare("SELECT username, email, profile FROM clients WHERE id = ?");
+            $statement->bind_param("i", $client_id);
+            $statement->execute();
+            $result = $statement->get_result();
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<div><strong class='text-lg font-semibold'>Username:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['username']) . "</span></div>";
+                    echo "<div><strong class='text-lg font-semibold'>Email:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['email']) . "</span></div>";
+                    echo "<div><strong class='text-lg font-semibold'>Profile:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['profile']) . "</span></div>";
+                }
+            } else {
+                echo "<div class='text-red-500'>No records found for this client ID.</div>";
             }
 
-            if (!isset($_SESSION["admin_id"])) {
-                echo "<div class='text-red-500 font-semibold text-center'>No admin ID found in session.</div>";
-                exit;
-            }
-            $admin_id = $_SESSION["admin_id"];
-            echo "<p class='text-lg font-semibold mb-4 text-center'>Admin ID: <span class='text-blue-500'>$admin_id</span></p>";
-            
-            $statement = $connection->prepare("SELECT * FROM admins WHERE id=?");
-            if ($statement) {
-                $statement->bind_param("i", $admin_id);
-                $statement->execute();
-                $result = $statement->get_result();
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<div class='bg-gray-50 rounded-lg shadow-sm p-6 mb-6'>";
-                        echo "<p class='text-lg font-semibold'>Admin Name: <span class='text-blue-500'>" . htmlspecialchars($row['username']) . "</span></p>";
-                        echo "<p class='text-lg font-semibold'>Email: <span class='text-blue-500'>" . htmlspecialchars($row['email']) . "</span></p>";
-                        echo "</div>";
-                    }
-                } else {
-                    echo "<div class='text-yellow-500 font-semibold text-center'>No admin data found for this ID.</div>";
-                }
-                $statement->close();
-            } else {
-                echo "<div class='text-red-500 font-semibold text-center'>Failed to prepare the SQL statement.</div>";
-            }
+            $statement->close();
             $connection->close();
-        ?>
+            ?>
+        </div>
+
     </div>
+
 </body>
 </html>
