@@ -28,6 +28,20 @@ $client_id = $_SESSION["client_id"];
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1; 
+        }
+    
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -135,7 +149,7 @@ $client_id = $_SESSION["client_id"];
                 while ($row = $result->fetch_assoc()) {
                     echo "<div><strong class='text-lg font-semibold'>Username:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['username']) . "</span></div>";
                     echo "<div><strong class='text-lg font-semibold'>Email:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['email']) . "</span></div>";
-                    echo "<div><strong class='text-lg font-semibold'>Profile:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['profile']) . "</span></div>";
+                   
                 }
             } else {
                 echo "<div class='text-red-500'>No records found for this client ID.</div>";

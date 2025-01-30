@@ -41,6 +41,20 @@ $connection->close();
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1; 
+        }
+    
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -114,11 +128,9 @@ $connection->close();
                     <i class="fas fa-sync-alt"></i> your website
                 </a>
                 <a href="yourprofile.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> your website
-                </a>
-                <a href="yourprofile.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> your profile
                 </a>
+                
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
                         <i class="fas fa-sign-out-alt"></i> Se déconnecter

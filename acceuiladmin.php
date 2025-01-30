@@ -9,6 +9,15 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+       body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+        }
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -51,7 +60,6 @@
             .navbar {
                 padding: 1rem;
             }
-
             .navbar-nav {
                 display: flex;
                 flex-direction: column;
@@ -59,7 +67,6 @@
                 gap: 1rem;
                 width: 100%;
             }
-
             .navbar-nav a {
                 padding: 1rem 2rem;
                 width: 100%;

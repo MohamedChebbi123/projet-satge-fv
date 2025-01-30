@@ -11,12 +11,12 @@
             background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
             background-size: cover;
             background-position: center;
-            min-height: 100vh; /* Ensure footer stays at the bottom */
+            min-height: 100vh; 
             display: flex;
             flex-direction: column;
         }
         .content {
-            flex: 1; /* Ensure this takes up available space, pushing footer down */
+            flex: 1; 
         }
     </style>
 </head>

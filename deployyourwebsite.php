@@ -10,7 +10,6 @@ if (isset($_SESSION["client_id"])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST["name"];
     $plan_duration = $_POST['plan_duration'];
-    $renewal_date = $_POST['renewal_date'];
     $repo = $_POST['repo'];
     if ($plan_duration === '6 months') {
         $price = 500;
@@ -18,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = 1000;
     }
 
-    $sql = "INSERT INTO websites (name, client_id, plan_duration, renewal_date, price, repo) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO websites (name, client_id, plan_duration,  price, repo) VALUES (?, ?, ?,  ?, ?)";
     if ($statement = $connection->prepare($sql)) {
-        $statement->bind_param("ssssds", $name, $client_id, $plan_duration, $renewal_date, $price, $repo);
+        $statement->bind_param("sssss", $name, $client_id, $plan_duration,  $price, $repo);
         if ($statement->execute()) {
             $successMessage = "<div class='text-green-500 text-center mt-4'>Website deployed successfully!</div>";
         } else {
@@ -45,6 +44,20 @@ $connection->close();
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh; 
+            display: flex;
+            flex-direction: column;
+        }
+        .content {
+            flex: 1; 
+        }
+    
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -161,16 +174,7 @@ $connection->close();
                 </select>
             </div>
 
-            <div>
-                <label for="renewal_date" class="block text-sm font-medium text-gray-700">Renewal Date</label>
-                <input 
-                    type="datetime-local" 
-                    id="renewal_date" 
-                    name="renewal_date" 
-                    required 
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-            </div>
+            
 
             <div>
                 <label for="repo" class="block text-sm font-medium text-gray-700">Repository URL</label>

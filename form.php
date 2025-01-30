@@ -55,6 +55,7 @@
                     <label for="client_email" class="block text-sm font-medium text-gray-700">Email:</label>
                     <input type="email" name="email" id="client_email" required class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
+                
             </div>
     
             <div class="flex justify-between">
@@ -71,6 +72,7 @@
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = $_POST['password'];
+       
 
         try {
             if ($formType === 'admin') {
