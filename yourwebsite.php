@@ -146,10 +146,8 @@ if (isset($_POST['delete_website'])) {
                                 $deployment_date->modify('+1 year');
                             }
 
-                            // Calculate the renewal date
                             $renewal_date = $deployment_date->format('Y-m-d');
 
-                            // Update renewal date in the database
                             $update_stmt = $connection->prepare("UPDATE websites SET renewal_date = ? WHERE id = ?");
                             if ($update_stmt) {
                                 $update_stmt->bind_param("si", $renewal_date, $row['id']);

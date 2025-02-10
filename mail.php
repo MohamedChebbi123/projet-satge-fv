@@ -3,15 +3,16 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require 'vendor/autoload.php';
-include 'connection.php'; // Ensure this file connects to your database properly
+include 'connection.php';
 
-// Get today's date
 $currentDate = date('Y-m-d'); 
+$sixMonthsBefore = date('Y-m-d', strtotime('+6 months'));
+$oneWeekBefore = date('Y-m-d', strtotime('+1 week'));
+$oneDayBefore = date('Y-m-d', strtotime('+1 day'));
 
-// Fetch websites with renewal date matching today
-$query = "SELECT name, renewal_date FROM websites WHERE DATE(renewal_date) = ?";
+$query = "SELECT name, renewal_date FROM websites WHERE renewal_date IN (?, ?, ?, ?)";
 $stmt = $connection->prepare($query);
-$stmt->bind_param("s", $currentDate);
+$stmt->bind_param("ssss", $sixMonthsBefore, $oneWeekBefore, $oneDayBefore, $currentDate);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -22,23 +23,33 @@ if ($result->num_rows > 0) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'hunterxh972@gmail.com';
-        $mail->Password = 'ikgx rmkd gpkj swkr'; // Use environment variables instead for security
+        $mail->Password = 'ikgx rmkd gpkj swkr'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
         $mail->setFrom('hunterxh972@gmail.com', 'Website Renewal Notifier');
-        $mail->addAddress('abdallahaltozeri@gmail.com', 'Boutah');
+        $mail->addAddress('abdallahaltozeri@gmail.com', 'h');
 
         $mail->isHTML(true);
-        $mail->Subject = 'Website Renewal Reminder';
+        $mail->Subject = 'Upcoming Website Renewal Reminder';
 
-        // Construct email body
         $body = '<h1>Renewal Reminder</h1>';
-        $body .= '<p>The following websites have reached their renewal date:</p>';
+        $body .= '<p>The following websites have upcoming or due renewal dates:</p>';
         $body .= '<ul>';
 
         while ($row = $result->fetch_assoc()) {
-            $body .= "<li><strong>{$row['name']}</strong> (Renewal Date: {$row['renewal_date']})</li>";
+            $daysLeft = (strtotime($row['renewal_date']) - strtotime($currentDate)) / 86400;
+            if ($daysLeft == 180) {
+                $message = 'in 6 months';
+            } elseif ($daysLeft == 7) {
+                $message = 'in 1 week';
+            } elseif ($daysLeft == 1) {
+                $message = 'tomorrow';
+            } else {
+                $message = '<b style="color:red;">DUE TODAY!</b>';
+            }
+
+            $body .= "<li><strong>{$row['name']}</strong> (Renewal Date: {$row['renewal_date']}) - <b>$message</b></li>";
         }
 
         $body .= '</ul>';
@@ -50,10 +61,9 @@ if ($result->num_rows > 0) {
         echo "Email sending failed. Error: {$mail->ErrorInfo}";
     }
 } else {
-    echo 'No websites need renewal today.';
+    echo 'No websites need renewal alerts today.';
 }
 
-// Close the database connection
 $stmt->close();
 $connection->close();
 ?>

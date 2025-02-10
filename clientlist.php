@@ -1,3 +1,9 @@
+<?php
+session_start();
+ if (!isset($_SESSION["admin_id"])) {
+    echo "get out ";
+    exit;
+}?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -41,7 +47,9 @@
                 </thead>
                 <tbody>
                     <?php
+                    
                     include "connection.php";
+                   
                     if (isset($_GET['delete_id'])) {
                         $delete_id = $_GET['delete_id'];
                         $delete_sql = "DELETE FROM clients WHERE id = ?";
