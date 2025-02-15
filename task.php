@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 use Cron\CronExpression;
 
-$cron = new CronExpression('0 9 * * *'); // Runs daily at 9 AM
+$cron = new CronExpression('0 9 * * *'); 
 
 if ($cron->isDue()) {
     file_put_contents("cron_log.txt", "Cron job executed at " . date("Y-m-d H:i:s") . "\n", FILE_APPEND);

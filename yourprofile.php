@@ -15,6 +15,7 @@ if (isset($_POST['logout'])) {
     exit();
 }
 $client_id = $_SESSION["client_id"];
+echo "$client_id"
 ?>
 
 <!DOCTYPE html>
@@ -119,6 +120,9 @@ $client_id = $_SESSION["client_id"];
                 </a>
                 <a href="welcome.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> welcome
+                </a>
+                <a href="askquestion" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> ask a question
                 </a>
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">

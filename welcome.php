@@ -131,6 +131,9 @@ $connection->close();
                     <i class="fas fa-sync-alt"></i> your profile
                 </a>
                 
+                <a href="askquestion.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> ask questions
+                </a>
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
                         <i class="fas fa-sign-out-alt"></i> Se déconnecter

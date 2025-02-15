@@ -6,42 +6,43 @@
     <title>Admin Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Welcome Back, Admin</h1>
-        <form action="" method="post" class="space-y-4">
+<body class="bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center min-h-screen p-6">
+    <div class="max-w-md w-full bg-white/30 backdrop-blur-lg p-8 rounded-xl shadow-2xl border border-white/20">
+        <h1 class="text-3xl font-extrabold text-center text-white mb-6">Welcome Back, Admin</h1>
+        <form action="" method="post" class="space-y-6">
             <div>
-                <label for="admin_username" class="block text-gray-700 font-medium mb-2">Username:</label>
+                <label for="admin_username" class="block text-white font-medium mb-2">Username:</label>
                 <input 
                     type="text" 
                     name="username" 
                     id="admin_username" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white/30 text-white placeholder-white focus:ring-2 focus:ring-indigo-400 focus:outline-none" 
                     placeholder="Enter your username" 
                     required>
             </div>
             <div>
-                <label for="admin_password" class="block text-gray-700 font-medium mb-2">Password:</label>
+                <label for="admin_password" class="block text-white font-medium mb-2">Password:</label>
                 <input 
                     type="password" 
                     name="password" 
                     id="admin_password" 
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" 
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white/30 text-white placeholder-white focus:ring-2 focus:ring-indigo-400 focus:outline-none" 
                     placeholder="Enter your password" 
                     required>
             </div>
             <button 
                 type="submit" 
-                class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                class="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold shadow-lg hover:bg-indigo-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                 Log In
             </button>
         </form>
-        <p class="text-center text-gray-500 mt-4">
-            Forgot your password? <a href="forgot_password.php" class="text-blue-500 hover:underline">Reset here</a>
+        <p class="text-center text-white mt-4">
+            Forgot your password? <a href="verifyadmin.php" class="text-indigo-300 hover:underline">Reset here</a>
         </p>
     </div>
 </body>
 </html>
+
 
 <?php
 session_start();
@@ -70,4 +71,4 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     $statement->close();
     $connection->close();
 }
-?>
+?>  
