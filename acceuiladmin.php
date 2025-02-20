@@ -1,3 +1,39 @@
+<?php
+    include "connection.php";
+    session_start();
+
+    if (isset($_POST['logout'])) {
+        session_destroy();
+        header("Location: form.php");
+        exit;
+    }
+
+    if (!isset($_SESSION["admin_id"])) {
+        echo "<div class='text-red-500 font-semibold text-center'>No admin ID found in session.</div>";
+        exit;
+    }
+    $admin_id = $_SESSION["admin_id"];
+    $statement = $connection->prepare("SELECT * FROM admins WHERE id=?");
+    if ($statement) {
+        $statement->bind_param("i", $admin_id);
+        $statement->execute();
+        $result = $statement->get_result();
+        $admin_data = $result->fetch_assoc(); 
+        $statement->close();
+    } else {
+        echo "<div class='text-red-500 font-semibold text-center'>Failed to prepare the SQL statement.</div>";
+    }
+
+    $query_users = "SELECT COUNT(*) AS total_users FROM clients";
+    $result_users = $connection->query($query_users);
+    $total_users = $result_users->fetch_assoc()['total_users'];
+
+    $query_websites = "SELECT COUNT(*) AS total_websites FROM websites";
+    $result_websites = $connection->query($query_websites);
+    $total_websites = $result_websites->fetch_assoc()['total_websites'];
+
+    $connection->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,7 +115,6 @@
     <header class="navbar p-4">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">HeberGest</h1>
-            
             <nav class="navbar-nav space-x-6 hidden md:flex">
                 <a href="clientlist.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-users"></i> Liste des clients 
@@ -87,8 +122,11 @@
                 <a href="listwebsite.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> Listes des websites
                 </a>
-                <a href="questions.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> qestions
+                <a href="clientsreviews.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> reviews
+                </a>
+                <a href="acceuiladmin.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> welcome
                 </a>
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
@@ -98,64 +136,23 @@
             </nav>
         </div>
     </header>
-    
     <div class="container mx-auto mt-8">
-        <?php
-            include "connection.php";
-            
-            session_start();
-            
-            if (isset($_POST['logout'])) {
-                session_destroy();
-                header("Location: form.php");
-                exit;
-            }
-
-            if (!isset($_SESSION["admin_id"])) {
-                echo "<div class='text-red-500 font-semibold text-center'>No admin ID found in session.</div>";
-                exit;
-            }
-            $admin_id = $_SESSION["admin_id"];
-            echo "<p class='text-lg font-semibold mb-4 text-center'>Admin ID: <span class='text-blue-500'>$admin_id</span></p>";
-            
-            $statement = $connection->prepare("SELECT * FROM admins WHERE id=?");
-            if ($statement) {
-                $statement->bind_param("i", $admin_id);
-                $statement->execute();
-                $result = $statement->get_result();
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<div class='bg-gray-50 rounded-lg shadow-sm p-6 mb-6'>";
-                        echo "<p class='text-lg font-semibold'>Admin Name: <span class='text-blue-500'>" . htmlspecialchars($row['username']) . "</span></p>";
-                        echo "<p class='text-lg font-semibold'>Email: <span class='text-blue-500'>" . htmlspecialchars($row['email']) . "</span></p>";
-                        echo "</div>";
-                    }
-                } else {
-                    echo "<div class='text-yellow-500 font-semibold text-center'>No admin data found for this ID.</div>";
-                }
-                $statement->close();
-            } else {
-                echo "<div class='text-red-500 font-semibold text-center'>Failed to prepare the SQL statement.</div>";
-            }
-            
-            $query_users = "SELECT COUNT(*) AS total_users FROM clients";
-            $result_users = $connection->query($query_users);
-            $total_users = $result_users->fetch_assoc()['total_users'];
-            
-            
-            $query_websites = "SELECT COUNT(*) AS total_websites FROM websites";
-            $result_websites = $connection->query($query_websites);
-            $total_websites = $result_websites->fetch_assoc()['total_websites'];
-
-            $connection->close();
-        ?>
         
+
+        <?php if (!empty($admin_data)): ?>
+            <div class="bg-gray-50 rounded-lg shadow-sm p-6 mb-6">
+                <p class="text-lg font-semibold">Admin Name: <span class="text-blue-500"><?php echo $admin_data['username']; ?></span></p>
+                <p class="text-lg font-semibold">Email: <span class="text-blue-500"><?php echo $admin_data['email']; ?></span></p>
+            </div>
+        <?php else: ?>
+            <div class="text-yellow-500 font-semibold text-center">No admin data found for this ID.</div>
+        <?php endif; ?>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-xl font-semibold text-gray-700">Total Users</h3>
                 <p class="text-3xl font-bold text-blue-500"><?php echo $total_users; ?></p>
             </div>
-
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h3 class="text-xl font-semibold text-gray-700">Total Websites</h3>
                 <p class="text-3xl font-bold text-blue-500"><?php echo $total_websites; ?></p>

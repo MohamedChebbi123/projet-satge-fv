@@ -4,7 +4,7 @@ session_start();
 if (isset($_SESSION["client_id"])) {
     $client_id = $_SESSION["client_id"];
 } else {
-    die("Client ID is not available in session.");
+    header("location:loginclient.php");
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -136,6 +136,12 @@ $connection->close();
                 </a>
                 <a href="welcome.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> welcome
+                </a>
+                <a href="reviewcl.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> review us
+                </a>
+                <a href="viewreviewscl.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> view reviews
                 </a>
                 <form action="" method="POST">
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">

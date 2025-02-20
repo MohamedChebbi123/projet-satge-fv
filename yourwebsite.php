@@ -2,6 +2,7 @@
 include "connection.php";
 session_start();
 if (!isset($_SESSION["client_id"])) {
+    header("location:loginclient.php");
     exit;
 }
 if (isset($_POST['logout'])) {
@@ -106,19 +107,36 @@ if (isset($_POST['delete_website'])) {
 <body class="bg-gray-50 text-gray-800 font-sans">
 
 <header class="navbar p-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold">HeberGest</h1>
-        <h3>Client Dashboard</h3>
-        <nav class="navbar-nav space-x-6 hidden md:flex">
-            <a href="deployyourwebsite.php"><i class="fas fa-users"></i> Deploy Your Website</a>
-            <a href="yourwebsite.php"><i class="fas fa-sync-alt"></i> Your Website</a>
-            <a href="yourprofile.php"><i class="fas fa-user"></i> Profile</a>
-            <form action="" method="POST">
-                <button type="submit" name="logout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</button>
-            </form>
-        </nav>
-    </div>
-</header>
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">HeberGest</h1>
+            <h3>client dashboard</h3>
+            <nav class="navbar-nav space-x-6 hidden md:flex">
+                <a href="deployyourwebsite.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-users"></i> deploy your website 
+                </a>
+                <a href="yourwebsite.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> your website
+                </a>
+                <a href="yourprofile.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> profile
+                </a>
+                <a href="welcome.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> welcome
+                </a>
+                <a href="reviewcl.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> review us
+                </a>
+                <a href="viewreviewscl.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> view reviews
+                </a>
+                <form action="" method="POST" >
+                    <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
+                        <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                    </button>
+                </form>
+            </nav>
+        </div>
+    </header>
 
 <div class="content container mx-auto p-8">
     <h1 class="text-3xl font-bold text-center">Websites Information</h1>

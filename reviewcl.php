@@ -1,21 +1,27 @@
 <?php
-include 'connection.php';
-session_start();
+include "connection.php";
 
+session_start();
 if (!isset($_SESSION["client_id"])) {
-    header("location:loginclient.php");
     exit;
 }
 
-
-
-if (isset($_POST['logout'])) {
-    session_destroy();
-    header("Location: form.php");
-    exit();
-}
 $client_id = $_SESSION["client_id"];
-echo "$client_id"
+
+if ($_SERVER['REQUEST_METHOD'] === "POST") {
+    $review = $_POST["review"];
+    $statement = $connection->prepare("INSERT INTO reviews (review, client_id ) VALUES (?, ?)");
+    if ($statement) {
+        $statement->bind_param("si", $review, $client_id);
+        if($statement->execute()){
+            echo "<p>review submitted, thank you</p>";
+        }else{
+            $errorMessage = "<div class='text-red-500 text-center mt-4'>Error deploying website: " . $statement->error . "</div>";
+
+        }
+        
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,14 +29,13 @@ echo "$client_id"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Profile</title>
+    <title>Submit a Review</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        
-        body {
+       body {
             font-family: 'Arial', sans-serif;
             background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
             background-size: cover;
@@ -39,10 +44,6 @@ echo "$client_id"
             display: flex;
             flex-direction: column;
         }
-        .content {
-            flex: 1; 
-        }
-    
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -85,7 +86,6 @@ echo "$client_id"
             .navbar {
                 padding: 1rem;
             }
-
             .navbar-nav {
                 display: flex;
                 flex-direction: column;
@@ -93,7 +93,6 @@ echo "$client_id"
                 gap: 1rem;
                 width: 100%;
             }
-
             .navbar-nav a {
                 padding: 1rem 2rem;
                 width: 100%;
@@ -102,8 +101,7 @@ echo "$client_id"
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-
+<body class="bg-gray-50 text-gray-800 font-sans">
 <header class="navbar p-4">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">HeberGest</h1>
@@ -116,11 +114,9 @@ echo "$client_id"
                     <i class="fas fa-sync-alt"></i> your website
                 </a>
                 <a href="yourprofile.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> profile
+                    <i class="fas fa-sync-alt"></i> your profile
                 </a>
-                <a href="welcome.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> welcome
-                </a>
+                
                 <a href="reviewcl.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> review us
                 </a>
@@ -135,39 +131,15 @@ echo "$client_id"
             </nav>
         </div>
     </header>
-
-    
-    <div class="container mx-auto p-8">
-
-       
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">Welcome, Client!</h1>
-            <p class="text-xl text-gray-600">Here are your profile details:</p>
-        </div>
-
-        
-        <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg space-y-4">
-            <?php
-            $statement = $connection->prepare("SELECT username, email, profile FROM clients WHERE id = ?");
-            $statement->bind_param("i", $client_id);
-            $statement->execute();
-            $result = $statement->get_result();
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<div><strong class='text-lg font-semibold'>Username:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['username']) . "</span></div>";
-                    echo "<div><strong class='text-lg font-semibold'>Email:</strong> <span class='text-gray-700'>" . htmlspecialchars($row['email']) . "</span></div>";
-                   
-                }
-            } else {
-                echo "<div class='text-red-500'>No records found for this client ID.</div>";
-            }
-
-            $statement->close();
-            $connection->close();
-            ?>
-        </div>
-
+    <div class="flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h1 class="text-xl font-bold mb-4 text-center">Submit Your Review</h1>
+        <form action="" method="post">
+            <textarea name="review" placeholder="Type your review here..." class="w-full p-2 border rounded mb-4"></textarea>
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Submit Review</button>
+        </form>
     </div>
+</div>
 
 </body>
 </html>

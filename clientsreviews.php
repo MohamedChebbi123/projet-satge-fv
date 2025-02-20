@@ -1,48 +1,53 @@
 <?php
-include 'connection.php';
+include "connection.php";
 session_start();
-
-if (!isset($_SESSION['client_id'])) {
-    header("Location: loginclient.php");
-    exit();
-}
 
 if (isset($_POST['logout'])) {
     session_destroy();
     header("Location: form.php");
-    exit();
+    exit;
 }
 
-$client_id = $_SESSION['client_id'];
-$statement = $connection->prepare("SELECT username FROM clients WHERE id = ?");
-$statement->bind_param("i", $client_id);
+if (!isset($_SESSION["admin_id"])) {
+    header("location:loginadmin.php");
+    exit;
+}
+
+$admin_id = $_SESSION["admin_id"];
+
+$statement = $connection->prepare("SELECT reviews.review_id, 
+reviews.review_date, reviews.review, 
+reviews.client_id, clients.username FROM reviews
+JOIN clients ON reviews.client_id = clients.id");
 $statement->execute();
 $result = $statement->get_result();
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $client_name = $row['username'];
-} else {
-    $client_name = "Client Name";
-}
+if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["reply"])) {
+    $review_id = $_POST["review_id"];
+    $reply = $_POST["reply"];
 
-$statement->close();
-$connection->close();
+    $edit_stmt = $connection->prepare("UPDATE reviews SET response = ?, admin_id = ? WHERE review_id = ?");
+    $edit_stmt->bind_param("sii", $reply, $admin_id, $review_id);
+    $edit_stmt->execute();
+    $edit_stmt->close();
+
+    header("Location: " . $_SERVER["PHP_SELF"]);
+    exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Client Messages</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        
-        body {
+       body {
             font-family: 'Arial', sans-serif;
             background-image: url('https://img.freepik.com/premium-photo/top-view-business-desk-with-laptop_73344-5359.jpg');
             background-size: cover;
@@ -51,10 +56,6 @@ $connection->close();
             display: flex;
             flex-direction: column;
         }
-        .content {
-            flex: 1; 
-        }
-    
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f0f4f8; 
@@ -97,7 +98,6 @@ $connection->close();
             .navbar {
                 padding: 1rem;
             }
-
             .navbar-nav {
                 display: flex;
                 flex-direction: column;
@@ -105,7 +105,6 @@ $connection->close();
                 gap: 1rem;
                 width: 100%;
             }
-
             .navbar-nav a {
                 padding: 1rem 2rem;
                 width: 100%;
@@ -115,65 +114,66 @@ $connection->close();
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
-
 <header class="navbar p-4">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold">HeberGest</h1>
-            <h3>client dashboard</h3>
+            
             <nav class="navbar-nav space-x-6 hidden md:flex">
-                <a href="deployyourwebsite.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-users"></i> deploy your website 
+                <a href="clientlist.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-users"></i> clients list 
                 </a>
-                <a href="yourwebsite.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> your website
+                <a href="listwebsite.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> websites list
+                </a>
+                
+                <a href="clientsreviews.php" class="hover:text-gray-300 transition-all">
+                    <i class="fas fa-sync-alt"></i> reviews
                 </a>
                 <a href="acceuiladmin.php" class="hover:text-gray-300 transition-all">
                     <i class="fas fa-sync-alt"></i> welcome
                 </a>
-                <a href="reviewcl.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> review us
-                </a>
-                <a href="viewreviewscl.php" class="hover:text-gray-300 transition-all">
-                    <i class="fas fa-sync-alt"></i> view reviews
-                </a>
                 <form action="" method="POST" >
                     <button type="submit" name="logout" class="hover:text-gray-300 transition-all flex items-center">
-                        <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        <i class="fas fa-sign-out-alt"></i> logout
                     </button>
                 </form>
             </nav>
         </div>
     </header>
 
-    <div class="container mx-auto p-8">
-        
+    <?php if ($result->num_rows > 0): ?>
+        <h1 class="text-3xl font-bold text-white mb-6 text-center bg-gray-800 bg-opacity-80 rounded-lg py-2">
+            reviews
+        </h1>
+        <div class="bg-white shadow-md rounded-lg p-4">
+                
+            <ul>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <li class="mb-4 border-b border-gray-300 pb-2">
+                        <p class="text-lg font-semibold">Sender: <?php echo htmlspecialchars($row["username"]); ?></p>
+                        <p class="text-lg font-semibold">Message: <?php echo htmlspecialchars($row["review"]); ?></p>
+                        <p class="text-sm text-gray-600">Sent on: <?php echo htmlspecialchars($row["review_date"]); ?></p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
-                <h2 class="text-3xl font-semibold text-gray-800 mb-4">6-Month Deployment Plan</h2>
-                <p class="text-lg text-gray-700 mb-4">This plan is ideal for short-term projects with full support and maintenance for 6 months.</p>
-                <ul class="text-gray-600 space-y-2 mb-6">
-                    <li>✔ Full support and maintenance</li>
-                    <li>✔ 6-month term</li>
-                    <li>✔ Renewal option available</li>
-                </ul>
-                <a href="deployyourwebsite.php?plan=6months" class="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-200">Choose Plan</a>
-            </div>
+                        <?php if (!empty($row['response'])): ?>
+                            <p class="mt-2 text-gray-800 font-semibold">Admin Reply: <?php echo htmlspecialchars($row['response']); ?></p>
+                        <?php endif; ?>
 
-            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out transform hover:scale-105">
-                <h2 class="text-3xl font-semibold text-gray-800 mb-4">1-Year Deployment Plan</h2>
-                <p class="text-lg text-gray-700 mb-4">Perfect for long-term projects, this plan offers 1 year of full support and regular updates.</p>
-                <ul class="text-gray-600 space-y-2 mb-6">
-                    <li>✔ Full support and maintenance</li>
-                    <li>✔ 1-year term</li>
-                    <li>✔ Regular updates and monitoring</li>
-                    <li>✔ Renewal option available</li>
-                </ul>
-                <a href="deployyourwebsite.php?plan=1year" class="inline-block px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition duration-200">Choose Plan</a>
-            </div>
+                        <form method="POST" class="mt-2">
+                            <input type="hidden" name="review_id" value="<?php echo $row["review_id"]; ?>">
+                            <input type="text" name="reply" class="border p-2 rounded" required placeholder="Reply to this review">
+                            <button type="submit" class="text-blue-500 hover:underline">Reply</button>
+                        </form>
+                    </li>
+                <?php endwhile; ?>
+            </ul>
         </div>
-    </div>
+    <?php else: ?>
+        <p class="text-gray-600">No messages found.</p>
+    <?php endif; ?>
 
+    <?php
+    $statement->close();
+    $connection->close();
+    ?>
 </body>
 </html>
-
