@@ -2,3 +2,4 @@ Cron job executed at 2025-01-30 20:38:20
 Output: PHP Warning:  PHP Startup: Unable to load dynamic library '/path/to/extension/mysqli.so' (tried: /path/to/extension/mysqli.so (Le module spécifié est introuvable), ext\php_/path/to/extension/mysqli.so.dll (Le module spécifié est introuvable)) in Unknown on line 0
 PHP Warning:  Module "mysqli" is already loaded in Unknown on line 0
 Renewal email sent successfully!
+Cron job NOT due at 2025-03-11 21:58:52
